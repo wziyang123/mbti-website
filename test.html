@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>MBTI测试修复验证</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .test-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 50px auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .progress span {
+            font-weight: bold;
+            color: #6a4bc6;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .button {
+            background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106,75,198,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 MBTI测试修复验证</h1>
+        
+        <div class="info">
+            <h3>📊 测试信息</h3>
+            <p><strong>专家版题目数量:</strong> <span id="expert-count">检查中...</span></p>
+            <p><strong>基础版题目数量:</strong> <span id="basic-count">检查中...</span></p>
+            <p><strong>进阶版题目数量:</strong> <span id="advanced-count">检查中...</span></p>
+        </div>
+        
+        <div class="progress">
+            <h3>📈 进度显示测试</h3>
+            <p>当前进度: <span id="current">1</span>/<span id="total">30</span></p>
+            <button class="button" onclick="testBasic()">测试基础版 (30题)</button>
+            <button class="button" onclick="testAdvanced()">测试进阶版 (50题)</button>
+            <button class="button" onclick="testExpert()">测试专家版 (80题)</button>
+        </div>
+        
+        <div class="info">
+            <h3>🔍 调试信息</h3>
+            <div id="debug-info">点击上方按钮开始测试...</div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟题目数组
+        const basicQuestions = Array(30).fill().map((_, i) => ({ question: `基础题 ${i+1}`, a: '选项A', b: '选项B' }));
+        const advancedQuestions = Array(50).fill().map((_, i) => ({ question: `进阶题 ${i+1}`, a: '选项A', b: '选项B' }));
+        const expertQuestions = Array(80).fill().map((_, i) => ({ question: `专家题 ${i+1}`, a: '选项A', b: '选项B' }));
+        
+        let currentType = 'basic';
+        let currentIndex = 0;
+        
+        function updateProgress() {
+            let questions;
+            if (currentType === 'basic') {
+                questions = basicQuestions;
+            } else if (currentType === 'advanced') {
+                questions = advancedQuestions;
+            } else {
+                questions = expertQuestions;
+            }
+            
+            document.getElementById('current').innerText = currentIndex + 1;
+            document.getElementById('total').innerText = questions.length;
+            
+            const debugInfo = `
+                <p><strong>当前测试类型:</strong> ${currentType}</p>
+                <p><strong>题目数组长度:</strong> ${questions.length}</p>
+                <p><strong>当前题目索引:</strong> ${currentIndex}</p>
+                <p><strong>显示的总数:</strong> ${document.getElementById('total').innerText}</p>
+                <p><strong>应该显示的总数:</strong> ${questions.length}</p>
+            `;
+            document.getElementById('debug-info').innerHTML = debugInfo;
+        }
+        
+        function testBasic() {
+            currentType = 'basic';
+            currentIndex = 0;
+            updateProgress();
+        }
+        
+        function testAdvanced() {
+            currentType = 'advanced';
+            currentIndex = 0;
+            updateProgress();
+        }
+        
+        function testExpert() {
+            currentType = 'expert';
+            currentIndex = 0;
+            updateProgress();
+        }
+        
+        // 初始化显示
+        document.getElementById('expert-count').textContent = expertQuestions.length;
+        document.getElementById('basic-count').textContent = basicQuestions.length;
+        document.getElementById('advanced-count').textContent = advancedQuestions.length;
+        updateProgress();
+    </script>
+</body>
+</html> 

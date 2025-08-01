@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>MBTI 人格测试</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+    .color-block {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+      z-index: 0;
+    }
+    .block1 { width: 180px; height: 180px; background: #fbc2eb; top: 8%; left: 2%; }
+    .block2 { width: 120px; height: 120px; background: #a18cd1; top: 70%; left: 80%; }
+    .block3 { width: 100px; height: 100px; background: #6a4bc6; top: 60%; left: 10%; }
+    .block4 { width: 80px; height: 80px; background: #f9ea8f; top: 20%; left: 75%; }
+    .main-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.92);
+      border-radius: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+      max-width: 520px;
+      margin: 80px auto 0 auto;
+      padding: 64px 44px 44px 44px;
+      text-align: center;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .mbti-title {
+      font-size: 3.6em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 0.2em;
+      background: linear-gradient(90deg, #6a4bc6 30%, #fbc2eb 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mbti-sub {
+      font-size: 1.7em;
+      color: #f9a826;
+      margin-bottom: 1.2em;
+      font-weight: 600;
+    }
+    .desc {
+      color: #444;
+      font-size: 1.5em;
+      margin-bottom: 2em;
+      line-height: 1.6;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2em;
+      position: relative;
+      width: 100%;
+      flex: 1;
+      justify-content: center;
+    }
+    .main-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .secondary-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 24px;
+    }
+    #start-btn {
+      background: linear-gradient(90deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 18px 52px;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.1);
+    }
+    #start-btn:hover {
+      background: linear-gradient(90deg, #fbc2eb 0%, #6a4bc6 100%);
+    }
+    .character-img {
+      position: absolute;
+      z-index: 2;
+      width: 200px;
+      opacity: 0.98;
+      pointer-events: none;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 6px 24px rgba(106,75,198,0.18));
+    }
+    .character1 { left: 15%; bottom: 8%; }
+    .character2 { right: 15%; bottom: 8%; }
+    .character3 { left: 15%; top: 8%; }
+    .character4 { right: 15%; top: 8%; }
+    @media (max-width: 900px) {
+      .character-img { width: 130px; }
+      .character1, .character2 { left: 5%; right: 5%; }
+      .character3, .character4 { left: 10%; right: 10%; }
+    }
+    @media (max-width: 600px) {
+      .character-img { display: none; }
+    }
+    .highlight-tip {
+      margin-top: 1.5em;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #e94f4a;
+      background: linear-gradient(90deg, #fffbe6 0%, #ffe0e9 100%);
+      border-radius: 16px;
+      padding: 16px 28px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(233,79,74,0.08);
+      letter-spacing: 1px;
+      line-height: 1.4;
+    }
+    #settings-btn.icon-btn {
+      background: #f3f0ff;
+      border: none;
+      border-radius: 50%;
+      padding: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.08);
+      transition: background 0.2s;
+    }
+    #settings-btn.icon-btn:hover {
+      background: #e0d7fa;
+    }
+    #notepad-btn.icon-btn {
+      background: #f3f0ff;
+      border: none;
+      border-radius: 50%;
+      padding: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.08);
+      transition: background 0.2s;
+    }
+    #notepad-btn.icon-btn:hover {
+      background: #e0d7fa;
+    }
+    #history-btn.icon-btn {
+      background: #f3f0ff;
+      border: none;
+      border-radius: 50%;
+      padding: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.08);
+      transition: background 0.2s;
+    }
+    #history-btn.icon-btn:hover {
+      background: #e0d7fa;
+    }
+
+    .test-select {
+      display: none;
+      max-width: 900px;
+      margin: 60px auto 0 auto;
+      padding: 0 10px;
+      text-align: center;
+    }
+    .test-options {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 36px;
+      flex-wrap: nowrap;
+    }
+    .test-card {
+      flex: 1 1 0;
+      min-width: 200px;
+      max-width: 220px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      padding: 32px 16px 16px 16px;
+      text-align: center;
+      border: 3px solid transparent;
+      position: relative;
+      transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .test-card.selected {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 3px solid #6a4bc6;
+      transform: scale(1.04);
+    }
+    .test-card.green { border-color: #3ecb7b; }
+    .test-card.blue { border-color: #4a90e2; }
+    .test-card.red { border-color: #e94f4a; }
+    .test-card .icon {
+      font-size: 3.2em;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .test-card.green .icon { color: #3ecb7b; }
+    .test-card.blue .icon { color: #4a90e2; }
+    .test-card.red .icon { color: #e94f4a; }
+    .test-card .title {
+      font-size: 1.7em;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .test-card .subtitle {
+      font-size: 1.3em;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .test-card .hot {
+      font-size: 1.1em;
+      color: #b0b0b0;
+      margin-top: 10px;
+    }
+    .mbti-info {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(106,75,198,0.07);
+      padding: 32px 24px;
+      max-width: 800px;
+      margin: 0 auto 40px auto;
+      text-align: left;
+      font-size: 1.2em;
+      color: #333;
+      line-height: 1.8;
+    }
+    .mbti-info h2 {
+      font-size: 1.5em;
+      color: #6a4bc6;
+      margin-bottom: 12px;
+    }
+    .mbti-info strong { color: #e94f4a; }
+    @media (max-width: 700px) {
+      .test-options { 
+        flex-direction: column; 
+        gap: 18px; 
+        flex-wrap: wrap;
+      }
+      .test-card { 
+        max-width: 100%; 
+        min-width: auto;
+      }
+    }
+    .start-btn-orange {
+      margin-top: 18px;
+      background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+      color: #fff;
+      border: none;
+      border-radius: 22px;
+      padding: 12px 40px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255,152,0,0.10);
+      transition: background 0.2s, transform 0.2s;
+      letter-spacing: 1px;
+    }
+    .start-btn-orange:hover {
+      background: linear-gradient(90deg, #ffb347 0%, #ff9800 100%);
+      transform: scale(1.06);
+    }
+    .quiz-page {
+      display: none;
+      max-width: 800px;
+      margin: 20px auto 0 auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(106,75,198,0.10);
+      overflow: hidden;
+      position: relative;
+    }
+    .quiz-header {
+      background: linear-gradient(135deg, #3ecb7b 0%, #4a90e2 100%);
+      color: white;
+      padding: 36px 28px 28px 28px;
+      text-align: center;
+    }
+    .quiz-title {
+      font-size: 2.4em;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .quiz-subtitle {
+      font-size: 1.4em;
+      opacity: 0.95;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .quiz-info-cards {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .info-card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .info-icon {
+      font-size: 1.3em;
+    }
+    .info-text {
+      font-size: 1.2em;
+      font-weight: 500;
+    }
+    .quiz-progress {
+      font-size: 1.1em;
+      opacity: 0.9;
+      margin-bottom: 12px;
+    }
+    .quiz-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .quiz-bar {
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      width: 0%;
+      transition: width 0.3s;
+      border-radius: 8px;
+    }
+    .quiz-content {
+      padding: 24px 28px 24px 28px;
+      text-align: center;
+    }
+    .quiz-question {
+      font-size: 1.8em;
+      color: #333;
+      margin-bottom: 36px;
+      min-height: 80px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .quiz-choices {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .quiz-choice {
+      flex: 1 1 260px;
+      max-width: 310px;
+      font-size: 1.6em;
+      font-weight: bold;
+      border: none;
+      border-radius: 16px;
+      padding: 22px 32px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .quiz-choice::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .quiz-choice:hover::before {
+      left: 100%;
+    }
+    .quiz-a {
+      background: linear-gradient(135deg, #6a4bc6 0%, #a18cd1 100%);
+      color: #fff;
+    }
+    .quiz-a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(106,75,198,0.3);
+    }
+    .quiz-b {
+      background: linear-gradient(135deg, #ff9800 0%, #ffb347 100%);
+      color: #fff;
+    }
+    .quiz-b:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255,152,0,0.3);
+    }
+    .quiz-detail-choices {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: nowrap;
+      width: 100%;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .quiz-detail {
+      flex: 1 1 0;
+      min-width: 130px;
+      max-width: 170px;
+      text-align: center;
+      background: #f8f9fa;
+      color: #6a4bc6;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 18px 0;
+      font-size: 1.4em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    @media (max-width: 700px) {
+      .quiz-detail-choices {
+        gap: 6px;
+      }
+      .quiz-detail {
+        min-width: 70px;
+        font-size: 1.1em;
+        padding: 12px 0;
+      }
+    }
+    /* 非常像A - 紫色渐变 */
+    .quiz-detail[data-score="2"] {
+      background: linear-gradient(135deg, #6a4bc6 0%, #a18cd1 100%);
+      color: #fff;
+      border-color: #6a4bc6;
+    }
+    .quiz-detail[data-score="2"]:hover {
+      background: linear-gradient(135deg, #a18cd1 0%, #6a4bc6 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106,75,198,0.3);
+    }
+    /* 比较像A - 浅紫色 */
+    .quiz-detail[data-score="1"] {
+      background: linear-gradient(135deg, #a18cd1 0%, #c4b5fd 100%);
+      color: #fff;
+      border-color: #a18cd1;
+    }
+    .quiz-detail[data-score="1"]:hover {
+      background: linear-gradient(135deg, #c4b5fd 0%, #a18cd1 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(161,140,209,0.3);
+    }
+    /* 居中 - 一半紫色一半橙色 */
+    .quiz-detail[data-score="0"] {
+      background: linear-gradient(90deg, #6a4bc6 0%, #6a4bc6 49%, #ff9800 51%, #ff9800 100%);
+      color: #fff;
+      border-color: #6a4bc6;
+      font-weight: bold;
+    }
+    .quiz-detail[data-score="0"]:hover {
+      background: linear-gradient(90deg, #a18cd1 0%, #a18cd1 49%, #ffb347 51%, #ffb347 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106,75,198,0.2);
+    }
+    /* 比较像B - 浅橙色 */
+    .quiz-detail[data-score="-1"] {
+      background: linear-gradient(135deg, #ffb347 0%, #ffcc80 100%);
+      color: #fff;
+      border-color: #ffb347;
+    }
+    .quiz-detail[data-score="-1"]:hover {
+      background: linear-gradient(135deg, #ffcc80 0%, #ffb347 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,179,71,0.3);
+    }
+    /* 非常像B - 橙色渐变 */
+    .quiz-detail[data-score="-2"] {
+      background: linear-gradient(135deg, #ff9800 0%, #ffb347 100%);
+      color: #fff;
+      border-color: #ff9800;
+    }
+    .quiz-detail[data-score="-2"]:hover {
+      background: linear-gradient(135deg, #ffb347 0%, #ff9800 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,152,0,0.3);
+    }
+    .quiz-footer {
+      margin-top: 24px;
+      color: #888;
+      font-size: 0.98em;
+    }
+    @media (max-width: 600px) {
+      .quiz-info-cards {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .info-card {
+        justify-content: center;
+      }
+      .quiz-choices {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .quiz-choice {
+        max-width: 100%;
+        font-size: 1.3em;
+        padding: 16px 20px;
+      }
+      .quiz-detail-choices {
+        gap: 6px;
+      }
+      .quiz-detail {
+        padding: 12px 16px;
+        font-size: 1.1em;
+      }
+    }
+    
+    /* 详细分析页面样式 */
+    .detail-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid #6a4bc6;
+    }
+    .detail-section h3 {
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .detail-section ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .detail-section li {
+      margin-bottom: 8px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .career-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .career-item {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: center;
+      color: #333;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .career-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .detail-content {
+      text-align: left;
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .detail-content h2 {
+      color: #6a4bc6;
+      margin-bottom: 25px;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    .detail-content p {
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .detail-buttons {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .detail-buttons button {
+      margin: 10px;
+      padding: 12px 32px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .detail-buttons button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    @media (max-width: 700px) {
+      .career-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+      }
+      .career-item {
+        padding: 10px 12px;
+        font-size: 0.9em;
+      }
+      .detail-content {
+        padding: 15px;
+      }
+      .detail-content h2 {
+        font-size: 1.5em;
+      }
+    }
+
+    /* 设置面板样式 */
+    .settings-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .settings-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 24px 16px 24px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .settings-header h3 {
+      margin: 0;
+      font-size: 1.4em;
+      color: #333;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 2em;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .settings-body {
+      padding: 24px;
+    }
+
+    .setting-item {
+      margin-bottom: 32px;
+    }
+
+    .setting-item h4 {
+      margin: 0 0 16px 0;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    .setting-item p {
+      margin: 0 0 16px 0;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .language-options {
+      display: flex;
+      gap: 12px;
+    }
+
+    .lang-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: white;
+      color: #666;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn:hover {
+      border-color: #6a4bc6;
+      color: #6a4bc6;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, #6a4bc6, #a18cd1);
+      color: white;
+      border-color: #6a4bc6;
+    }
+
+    #feedback-text {
+      width: 100%;
+      min-height: 120px;
+      padding: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1em;
+      font-family: inherit;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    #feedback-text:focus {
+      outline: none;
+      border-color: #6a4bc6;
+    }
+
+    .submit-btn {
+      margin-top: 16px;
+      background: linear-gradient(135deg, #ff9800, #ffb347);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #ffb347, #ff9800);
+      transform: translateY(-1px);
+    }
+
+    /* 反馈成功提示样式 */
+    .feedback-success {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      backdrop-filter: blur(5px);
+    }
+
+    .success-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .success-content h3 {
+      margin: 0 0 16px 0;
+      color: #28a745;
+      font-size: 1.3em;
+    }
+
+    .success-content p {
+      margin: 0 0 24px 0;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .success-content button {
+      background: linear-gradient(135deg, #6a4bc6, #a18cd1);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 32px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .success-content button:hover {
+      background: linear-gradient(135deg, #a18cd1, #6a4bc6);
+      transform: translateY(-1px);
+    }
+
+    /* 记事本面板样式 */
+    .notepad-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .notepad-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .notepad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .notepad-header h3 {
+      margin: 0;
+      color: #333;
+      font-size: 1.5em;
+    }
+
+    .notepad-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .notepad-close:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .login-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-section h4 {
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .login-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .login-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qq-login {
+      background: #12b7f5;
+      color: white;
+    }
+
+    .qq-login:hover {
+      background: #0ea5e4;
+    }
+
+
+
+    .user-section {
+      display: none;
+      text-align: center;
+    }
+
+    .user-info {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .user-info h4 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .user-email {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+
+    .test-history {
+      margin-top: 20px;
+    }
+
+    .test-history h4 {
+      margin-bottom: 15px;
+      color: #333;
+      text-align: left;
+    }
+
+    .history-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-align: left;
+      border-left: 4px solid #007bff;
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .history-result {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .history-desc {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .send-results-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 15px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .send-results-btn:hover {
+      background: #218838;
+    }
+
+    .send-results-btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .no-history {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    /* 模态框样式 - 确保记事本面板居中显示 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+      font-size: 1.5em;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .close-btn:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-body {
+      text-align: center;
+    }
+
+    .login-options {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .user-info {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .user-info h3 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+
+    .test-history {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .test-history h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .send-results {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .send-results h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .send-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 15px;
+      transition: all 0.3s;
+    }
+
+    .send-btn:hover {
+      background: #218838;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .notepad-content {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      .login-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .modal-content {
+        padding: 20px;
+        margin: 10px;
+        width: 95%;
+      }
+    }
+
+                     /* 返回按钮样式 */
+        .back-btn {
+          background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%) !important;
+          color: white !important;
+          border: none;
+          border-radius: 16px;
+          padding: 22px 32px;
+          font-size: 1.6em;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all 0.3s;
+          box-shadow: 0 2px 8px rgba(128,128,128,0.2);
+          margin: 20px auto;
+          display: block;
+        }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, #a0a0a0 0%, #808080 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(128,128,128,0.3);
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    /* 结果页面样式 */
+    .result-page {
+      display: none;
+      max-width: 800px;
+      margin: 60px auto 0 auto;
+      padding: 0 20px;
+    }
+
+    .result-container {
+      background: rgba(255,255,255,0.95);
+      border-radius: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    .result-header h2 {
+      font-size: 2.4em;
+      color: #6a4bc6;
+      margin-bottom: 24px;
+    }
+
+    .mbti-result {
+      margin: 32px 0;
+    }
+
+    .mbti-type {
+      font-size: 4em;
+      font-weight: bold;
+      color: #6a4bc6;
+      margin-bottom: 16px;
+    }
+
+    .mbti-name {
+      font-size: 2em;
+      color: #f9a826;
+      margin-bottom: 16px;
+    }
+
+    .mbti-desc {
+      font-size: 1.3em;
+      color: #666;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 32px 0;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 12px 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.2);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106,75,198,0.3);
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 32px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-icon {
+      font-size: 2em;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .stat-title {
+      font-size: 1.1em;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #6a4bc6;
+    }
+
+    .result-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .retake-btn, .home-btn {
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 32px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(106,75,198,0.2);
+    }
+
+    .retake-btn:hover, .home-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106,75,198,0.3);
+    }
+
+    /* 详细分析页面样式 */
+    .analysis-page {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .analysis-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .analysis-header {
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .analysis-header h2 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+
+    .close-analysis {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .analysis-content {
+      padding: 32px;
+    }
+
+    .analysis-section {
+      margin-bottom: 32px;
+    }
+
+    .analysis-section h3 {
+      font-size: 1.5em;
+      color: #6a4bc6;
+      margin-bottom: 16px;
+    }
+
+    .traits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .trait-card {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .trait-card h4 {
+      color: #6a4bc6;
+      margin-bottom: 12px;
+    }
+
+    .trait-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .trait-card li {
+      padding: 8px 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .trait-card li:last-child {
+      border-bottom: none;
+    }
+
+    .career-suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .career-card {
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .relationship-advice {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .compatibility-chart {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .compatibility-item {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .compatibility-type {
+      display: block;
+      font-weight: bold;
+      color: #6a4bc6;
+      margin-bottom: 8px;
+    }
+
+    .compatibility-types {
+      font-size: 1.1em;
+      color: #666;
+    }
+
+    /* 对话框样式 */
+    .email-dialog, .share-dialog {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .email-content, .share-content {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .email-content h3, .share-content h3 {
+      color: #6a4bc6;
+      margin-bottom: 16px;
+    }
+
+    #email-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1em;
+      margin: 16px 0;
+    }
+
+    .email-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .send-email-btn, .cancel-email-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .send-email-btn {
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+    }
+
+    .cancel-email-btn {
+      background: #e9ecef;
+      color: #666;
+    }
+
+    .share-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .share-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .share-option:hover {
+      border-color: #6a4bc6;
+      transform: translateY(-2px);
+    }
+
+    .share-icon {
+      font-size: 2em;
+    }
+
+    .close-share-btn {
+      background: linear-gradient(135deg, #6a4bc6 0%, #fbc2eb 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+
+
+    .history-type {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #6a4bc6;
+    }
+
+    .history-name {
+      color: #666;
+      font-size: 1em;
+    }
+
+    .history-time {
+      color: #999;
+      font-size: 0.9em;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .result-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .traits-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compatibility-chart {
+        grid-template-columns: 1fr;
+      }
+
+      .share-options {
+        grid-template-columns: 1fr;
+      }
+
+      .analysis-container {
+        margin: 20px;
+      }
+
+      .history-container {
+        margin: 20px;
+      }
+    }
+          </style>
+          <script src="script.js?v=2024.1.23" defer></script>
+          <script>
+            // 强制更新脚本，确保quiz-total正确显示
+            window.addEventListener('load', function() {
+              console.log('页面加载完成，检查quiz-total元素');
+              const totalElement = document.getElementById('quiz-total');
+              if (totalElement) {
+                console.log('找到quiz-total元素，当前值:', totalElement.innerText);
+              }
+            });
+          </script>
+        </head>
+<body>
+  <div class="color-block block1"></div>
+  <div class="color-block block2"></div>
+  <div class="color-block block3"></div>
+  <div class="color-block block4"></div>
+  <img src="character1.jpg" alt="人物1" class="character-img character1">
+  <img src="character2.jpg" alt="人物2" class="character-img character2">
+  <img src="character3.jpg" alt="人物3" class="character-img character3">
+  <img src="character4.jpg" alt="人物4" class="character-img character4">
+  <div class="main-card">
+    <div class="mbti-title">MBTI</div>
+    <div class="mbti-sub">(16Personalities)</div>
+    <div class="desc">你是哪种MBTI性格？<br>快来测试，发现你的独特人格类型！</div>
+    <div class="button-container">
+      <div class="main-button">
+        <button id="start-btn">开始测试</button>
+      </div>
+      <div class="secondary-buttons">
+        <button id="settings-btn" title="设置" class="icon-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6a4bc6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 3.09V3a2 2 0 0 1 4 0v.09c0 .66.39 1.26 1 1.51a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82c.13.31.2.65.2 1v.09c0 .66.39 1.26 1 1.51.31.13.65.2 1 .2h.09a2 2 0 0 1 0 4h-.09c-.35 0-.69.07-1 .2z"/></svg>
+        </button>
+        <button id="notepad-btn" title="记事本" class="icon-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6a4bc6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="highlight-tip">你是e人还是i人，快来测试吧，寻找内心真正的自己！</div>
+  </div>
+
+  <!-- 设置面板 -->
+  <div id="settings-panel" class="settings-panel">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h3>⚙️ 设置</h3>
+        <button id="close-settings" class="close-btn">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-item">
+          <h4>🌐 语言设置</h4>
+          <div class="language-options">
+            <button class="lang-btn active" data-lang="zh">中文</button>
+            <button class="lang-btn" data-lang="en">English</button>
+          </div>
+        </div>
+        <div class="setting-item">
+          <h4>💬 反馈问题</h4>
+          <p>如果你发现任何问题或有改进建议，请告诉我们：</p>
+          <textarea id="feedback-text" placeholder="请详细描述你遇到的问题或建议..."></textarea>
+          <button id="submit-feedback" class="submit-btn">发送反馈</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 反馈成功提示 -->
+  <div id="feedback-success" class="feedback-success">
+    <div class="success-content">
+      <h3>✅ 反馈已发送</h3>
+      <p>感谢你的反馈！我们会认真考虑你的建议。</p>
+      <button id="close-success">确定</button>
+    </div>
+  </div>
+  <div class="test-select" id="test-select">
+    <div class="test-options">
+      <div class="test-card green">
+        <span class="icon">📝</span>
+        <div class="title">30题</div>
+        <div class="subtitle">基础版</div>
+        <div class="hot">近30天热度 12,345</div>
+        <button class="start-btn-orange">Start</button>
+      </div>
+      <div class="test-card blue">
+        <span class="icon">📄</span>
+        <div class="title">50题</div>
+        <div class="subtitle">进阶版</div>
+        <div class="hot">近30天热度 23,456</div>
+        <button class="start-btn-orange">Start</button>
+      </div>
+      <div class="test-card red">
+        <span class="icon">📚</span>
+        <div class="title">80题</div>
+        <div class="subtitle">专家版</div>
+        <div class="hot">近30天热度 34,567</div>
+        <button class="start-btn-orange">Start</button>
+      </div>
+    </div>
+    <div class="mbti-info">
+      <h2>MBTI 简介与权威信息</h2>
+      <p><strong>MBTI</strong>（Myers-Briggs Type Indicator，迈尔斯-布里格斯性格类型指标）是由 <strong>凯瑟琳·布里格斯（Katharine Cook Briggs）</strong> 和她的女儿 <strong>伊莎贝尔·布里格斯·迈尔斯（Isabel Briggs Myers）</strong> 基于荣格的心理类型理论于20世纪40年代共同发明的。MBTI 旨在帮助人们了解自己的性格类型和行为偏好。</p>
+      <p>MBTI 将人格分为16种类型，基于四个维度：<br>
+      <strong>外向(E)/内向(I)</strong>、<strong>感觉(S)/直觉(N)</strong>、<strong>思考(T)/情感(F)</strong>、<strong>判断(J)/知觉(P)</strong>。</p>
+      <p>MBTI 在现代社会被广泛应用于职业规划、团队建设、个人成长等领域。虽然它在学术界存在争议，但在自我认知、沟通和团队协作等实际应用中仍具有较大参考价值。</p>
+      <p><strong>现代年轻人与MBTI：</strong><br>
+      近年来，MBTI 在年轻群体中极为流行，成为社交网络、职场、校园等场景下自我介绍和了解他人的热门工具。许多年轻人通过 MBTI 测试探索自我、寻找同类、增进人际关系。MBTI 不仅帮助大家发现自身性格优势和成长空间，也成为兴趣圈层、交友、恋爱等话题的"社交密码"。</p>
+      <p><strong>MBTI 代表什么？常见标签：</strong><br>
+      MBTI 代表着一种性格类型的自我认知方式。每种类型都有独特的性格标签，例如：
+      <br>INTJ（策划者/建筑师）、ENFP（竞选者/理想主义者）、ISFJ（守护者/照顾者）、ENTP（发明家/辩论家）等。
+      <br>这些标签常常与"理性""感性""外向""内向""创新""细腻""领导力""共情力"等关键词相关联，成为现代年轻人表达自我、寻找共鸣的重要方式。</p>
+    </div>
+    <div class="back-btn-container">
+      <button class="back-btn" onclick="goBackToHome()">返回</button>
+    </div>
+  </div>
+  <div class="quiz-page" id="quiz-page">
+    <div class="quiz-header">
+      <div class="quiz-title">MBTI 30题标准版</div>
+      <div class="quiz-subtitle">MBTI十六人格(16Personalities)测试能为你提供具体而准确的人格分析，以至于可能会让你感到惊讶。</div>
+      <div class="quiz-info-cards">
+        <div class="info-card">
+          <span class="info-icon">⏱️</span>
+          <span class="info-text">测试没有具体时间限制，通常在15分钟内完成</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">💭</span>
+          <span class="info-text">按实际行为和感受选择，而不是想要和期望的</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">✅</span>
+          <span class="info-text">尽量避免重做上一题，相信你的第一选择就好</span>
+        </div>
+      </div>
+      <div class="quiz-progress">
+        <span id="quiz-current">1</span>/<span id="quiz-total">30</span>
+      </div>
+      <div class="quiz-bar-bg">
+        <div class="quiz-bar" id="quiz-bar"></div>
+      </div>
+    </div>
+    <div class="quiz-content">
+      <div class="quiz-question" id="quiz-question"></div>
+      <div class="quiz-choices">
+        <button class="quiz-choice quiz-a" id="quiz-a"></button>
+        <button class="quiz-choice quiz-b" id="quiz-b"></button>
+      </div>
+      <div class="quiz-detail-choices">
+        <button class="quiz-detail" data-score="2">非常像A</button>
+        <button class="quiz-detail" data-score="1">比较像A</button>
+        <button class="quiz-detail" data-score="0">居中</button>
+        <button class="quiz-detail" data-score="-1">比较像B</button>
+        <button class="quiz-detail" data-score="-2">非常像B</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="quiz-footer"></div>
+    <div class="back-btn-container">
+      <button class="back-btn" onclick="goBackToTestSelect()">返回</button>
+    </div>
+  </div>
+
+  <!-- 结果页面 -->
+  <div class="result-page" id="result-page">
+    <div class="result-container">
+      <div class="result-header">
+        <h2>🎉 测试完成！</h2>
+        <div class="mbti-result">
+          <div class="mbti-type" id="mbti-type">INTJ</div>
+          <div class="mbti-name" id="mbti-name">建筑师</div>
+          <div class="mbti-desc" id="mbti-desc">富有想象力和战略性的思考者，一切都要经过深思熟虑。</div>
+        </div>
+      </div>
+      
+      <div class="result-actions">
+        <button class="action-btn share-btn" onclick="shareResult()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          分享结果
+        </button>
+        <button class="action-btn analysis-btn" onclick="showDetailedAnalysis()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+          详细分析
+        </button>
+        <button class="action-btn export-btn" onclick="exportResult()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          导出结果
+        </button>
+        <button class="action-btn email-btn" onclick="showEmailDialog()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          邮件发送
+        </button>
+      </div>
+
+      <div class="result-stats">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-title">测试统计</div>
+          <div class="stat-value" id="test-stats">80题完成</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-title">用时</div>
+          <div class="stat-value" id="test-time">15分钟</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-title">准确度</div>
+          <div class="stat-value" id="test-accuracy">95%</div>
+        </div>
+      </div>
+
+      <div class="result-buttons">
+        <button class="retake-btn" onclick="retakeTest()">重新测试</button>
+        <button class="home-btn" onclick="goBackToHome()">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 详细分析页面 -->
+  <div class="analysis-page" id="analysis-page">
+    <div class="analysis-container">
+      <div class="analysis-header">
+        <h2>📋 详细分析</h2>
+        <button class="close-analysis" onclick="closeAnalysis()">×</button>
+      </div>
+      
+      <div class="analysis-content">
+        <div class="analysis-section">
+          <h3>🎭 性格特征</h3>
+          <div class="traits-grid">
+            <div class="trait-card">
+              <h4>💪 优势</h4>
+              <ul id="strengths-list">
+                <li>战略思维</li>
+                <li>独立性强</li>
+                <li>追求完美</li>
+              </ul>
+            </div>
+            <div class="trait-card">
+              <h4>🌱 成长空间</h4>
+              <ul id="weaknesses-list">
+                <li>过于理想化</li>
+                <li>不善于表达情感</li>
+                <li>可能显得冷漠</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-section">
+          <h3>💼 职业建议</h3>
+          <div class="career-suggestions" id="career-suggestions">
+            <div class="career-card">战略分析师</div>
+            <div class="career-card">投资顾问</div>
+            <div class="career-card">科研人员</div>
+            <div class="career-card">建筑师</div>
+          </div>
+        </div>
+
+        <div class="analysis-section">
+          <h3>🤝 人际关系建议</h3>
+          <div class="relationship-advice" id="relationship-advice">
+            <p>喜欢独立工作，追求系统性和逻辑性，善于制定长期战略。直接而简洁，重视效率和逻辑，可能显得过于理性。</p>
+          </div>
+        </div>
+
+        <div class="analysis-section">
+          <h3>📈 兼容性图表</h3>
+          <div class="compatibility-chart">
+            <div class="compatibility-item">
+              <span class="compatibility-type">最兼容</span>
+              <span class="compatibility-types">ENFP, ENTP</span>
+            </div>
+            <div class="compatibility-item">
+              <span class="compatibility-type">最不兼容</span>
+              <span class="compatibility-types">ESFP, ESTP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 邮件发送对话框 -->
+  <div class="email-dialog" id="email-dialog">
+    <div class="email-content">
+      <h3>📧 邮件发送</h3>
+      <p>输入邮箱地址，我们将把测试结果发送给您：</p>
+      <input type="email" id="email-input" placeholder="输入邮箱地址">
+      <div class="email-buttons">
+        <button class="send-email-btn" onclick="sendEmailResult()">发送邮件</button>
+        <button class="cancel-email-btn" onclick="closeEmailDialog()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分享对话框 -->
+  <div class="share-dialog" id="share-dialog">
+    <div class="share-content">
+      <h3>📤 分享结果</h3>
+      <p>将你的MBTI结果分享给朋友：</p>
+      <div class="share-options">
+        <button class="share-option" onclick="shareToWeChat()">
+          <span class="share-icon">💬</span>
+          微信
+        </button>
+        <button class="share-option" onclick="shareToQQ()">
+          <span class="share-icon">🐧</span>
+          QQ
+        </button>
+        <button class="share-option" onclick="shareToWeibo()">
+          <span class="share-icon">📱</span>
+          微博
+        </button>
+        <button class="share-option" onclick="copyLink()">
+          <span class="share-icon">🔗</span>
+          复制链接
+        </button>
+      </div>
+      <button class="close-share-btn" onclick="closeShareDialog()">关闭</button>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
