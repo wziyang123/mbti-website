@@ -2,11 +2,16 @@ const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // 中间件
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
+// 添加根路由
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // 邮件配置
 const transporter = nodemailer.createTransport({
