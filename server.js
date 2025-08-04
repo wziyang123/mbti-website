@@ -13,14 +13,17 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 邮件配置
-const transporter = nodemailer.createTransport({
-  service: 'qq',
-  auth: {
-    user: 'your-email@qq.com', // 替换为你的QQ邮箱
-    pass: 'your-password' // 替换为你的QQ邮箱授权码
-  }
-});
+// 邮件配置 - 只在有环境变量时启用
+let transporter = null;
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+  transporter = nodemailer.createTransport({
+    service: 'qq',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+}
 
 // 反馈API
 app.post('/api/feedback', async (req, res) => {
@@ -31,10 +34,14 @@ app.post('/api/feedback', async (req, res) => {
       return res.status(400).json({ error: '反馈内容不能为空' });
     }
 
+    if (!transporter) {
+      return res.status(500).json({ error: '邮件服务未配置' });
+    }
+
     // 邮件内容
     const mailOptions = {
-      from: 'your-email@qq.com', // 替换为你的QQ邮箱
-      to: 'your-email@qq.com', // 替换为你的QQ邮箱
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
       subject: 'MBTI网站反馈',
       html: `
         <h2>用户反馈</h2>
@@ -65,9 +72,13 @@ app.post('/api/send-results', async (req, res) => {
       return res.status(400).json({ error: '参数不完整' });
     }
 
+    if (!transporter) {
+      return res.status(500).json({ error: '邮件服务未配置' });
+    }
+
     // 邮件内容
     const mailOptions = {
-      from: 'your-email@qq.com', // 替换为你的QQ邮箱
+      from: process.env.EMAIL_USER,
       to: userEmail,
       subject: 'MBTI测试结果',
       html: `
